@@ -22,7 +22,6 @@ def insert_hijo():
             direccion, fecha_nacimiento, partida, dni_madre
         ))
 
-        # 🚨 Muy importante para evitar el error 2014
         while cursor.nextset():
             pass
 
@@ -41,3 +40,32 @@ def insert_hijo():
 
     finally:
         cursor.close()
+        
+# funcion para devolver a los hijos de una beneficiaria
+def lista_de_hijos (id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM vista_hijos where fk_beneficiaria = %s',(id,))
+        result = cursor.fetchall()
+        cursor.close()
+        hijos_list = []
+        for row in result:
+            hijos_list.append({
+                'id_hijo': row[2],
+                'DNI': row[3],
+                'nombres': row[4],
+                'edad': row[5],
+                'partida': row[6],
+                'direccion': row[7],
+                'estado': row[8]
+            })
+        return jsonify({
+            'success': True,
+            'data': hijos_list,
+            'message': 'Hijos cargados correctamente'
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        })
