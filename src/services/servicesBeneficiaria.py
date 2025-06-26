@@ -37,6 +37,52 @@ def get_beneficiarias():
             'message': 'Beneficiarias obtenidos correctamente'
         }), 200
     
+# Obtener una beneficiaria por su id
+def get_beneficiaria_por_id(id_beneficiaria):
+    try:
+        cursor = mysql.connection.cursor()
+        query = "SELECT * FROM vista_beneficiarias WHERE id_beneficiaria = %s"
+        cursor.execute(query, (id_beneficiaria,))
+        row = cursor.fetchone()
+        cursor.close()
+
+        if row is None:
+            return jsonify({
+                'success': False,
+                'message': 'Beneficiaria no encontrada'
+            }), 404
+
+        beneficiaria = {
+            'id_persona': row[0],
+            'id_beneficiaria': row[1],
+            'dni': row[2],
+            'nombres_completos': row[3],
+            'nombre': row[4],
+            'ap_paterno': row[5],
+            'ap_materno': row[6],
+            'direccion': row[7],
+            'hijos': row[8],
+            'telefono': row[9],
+            'sisfoh': row[10],
+            'tipo': row[11],
+            'raciones': row[12],
+            'estado': row[15],
+            'fecha_nacimiento': row[13]
+        }
+
+        return jsonify({
+            'success': True,
+            'data': beneficiaria,
+            'message': 'Beneficiaria obtenida correctamente'
+        }), 200
+
+    except MySQLdb.Error as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+    
 # Registrar una nueva beneficiaria
 def registrar_beneficiaria(request):
     try:
@@ -69,6 +115,7 @@ def registrar_beneficiaria(request):
 def actualizar_beneficiaria(request):
     try:
         data = request.get_json()
+        print("Datos recibidos:", data)
         cursor = mysql.connection.cursor()
 
         # Verifica que todos los campos estén presentes
@@ -98,7 +145,7 @@ def actualizar_beneficiaria(request):
         mysql.connection.commit()
         return jsonify({
             'success': True,
-            'message': "Beneficiaria Registrada exitosamente"
+            'message': "Datos actualizados exitosamente"
         }), 200
 
     except MySQLdb.Error as e:
