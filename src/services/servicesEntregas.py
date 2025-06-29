@@ -5,10 +5,10 @@ import MySQLdb
 # Funcion para obtener todas las entregas de una junta
 def get_entregas():
     try:
-        id_representante = request.args.get('id_representante')
+        fk_junta = request.args.get('id_representante')
 
         cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM vista_entregas WHERE id_representante = %s', (id_representante,))
+        cursor.execute('SELECT * FROM vista_entregas WHERE junta = %s', (fk_junta,))
         result = cursor.fetchall()
         cursor.close()
 

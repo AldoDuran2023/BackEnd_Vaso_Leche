@@ -4,8 +4,10 @@ import MySQLdb
 
 # Obtener todos los gastos de la vista
 def obtener_gastos():
+    fk_junta = request.args.get('id_representante')
+    
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM vista_gastos_completa")
+    cursor.execute('SELECT * FROM vista_gastos_completa WHERE junta = %s', (fk_junta,))
     results = cursor.fetchall()
     cursor.close()
     
